@@ -1,35 +1,48 @@
 use anyhow::{Context, Result};
-use clap::Parser;
-use crossterm::event::{KeyCode, KeyEventKind};
-use ratatui::crossterm::event;
-use ratatui::text::Line;
-use ratatui::widgets::Widget;
-use ratatui::{prelude, DefaultTerminal, Frame};
+use iced::widget::{slider, Column};
+use iced::Theme;
 use rodio::{source::Source, Decoder, OutputStream};
 use std::fs::File;
 use std::io::BufReader;
 use std::path::PathBuf;
-use std::time::Duration;
 
-#[derive(Parser, Debug)]
-#[command(version, about, long_about = None)]
-struct Args {
-    /// Name of the person to greet
-    #[arg(short, long)]
-    file: PathBuf,
-}
-
-fn main() -> Result<()> {
-    let mut terminal = ratatui::init();
-
-    let mut app = App { exit: false };
-
-    let app_result = app.run(&mut terminal);
+fn main() -> iced::Result {
     // Get CLI arguments
     //let args = Args::parse();
     //play_audio(args.file).expect("Failed to play audio");
-    ratatui::restore();
-    app_result
+
+    iced::application("Libre Timecode Programmer", SeekBar::update, SeekBar::view)
+        .theme(SeekBar::theme)
+        .run()
+}
+#[derive(Default)]
+pub struct SeekBar {
+    time: f32,
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum Message {
+    SliderChanged(f32),
+}
+
+impl SeekBar {
+    fn update(&mut self, message: Message) {
+        match message {
+            Message::SliderChanged(x) => self.time = x,
+        }
+    }
+
+    fn view(&self) -> Column<Message> {
+        let slider = slider(0.0..=100.0, self.time, Message::SliderChanged);
+
+        let container = Column::new().push(slider);
+
+        container
+    }
+
+    fn theme(&self) -> Theme {
+        Theme::SolarizedDark
+    }
 }
 
 fn play_audio(location: PathBuf) -> Result<()> {
@@ -53,48 +66,4 @@ fn play_audio(location: PathBuf) -> Result<()> {
     std::thread::sleep(duration);
 
     Ok(())
-}
-
-pub struct App {
-    exit: bool,
-}
-
-impl App {
-    fn run(&mut self, terminal: &mut DefaultTerminal) -> Result<()> {
-        while !self.exit {
-            if event::poll(Duration::from_millis(250)).context("Event poll failed")? {
-                match event::read()? {
-                    crossterm::event::Event::Key(key_event) => self.handle_key_event(key_event)?,
-                    _ => {}
-                }
-            }
-            terminal
-                .draw(|frame| self.draw(frame))
-                .context("Failed to draw a frame")?;
-        }
-
-        Ok(())
-    }
-
-    fn draw(&self, frame: &mut Frame) {
-        frame.render_widget(self, frame.area());
-    }
-
-    fn handle_key_event(&mut self, key_event: crossterm::event::KeyEvent) -> Result<()> {
-        if key_event.kind == KeyEventKind::Press && key_event.code == KeyCode::Char('q') {
-            self.exit = true;
-        }
-
-        Ok(())
-    }
-}
-
-impl Widget for &App {
-    fn render(self, area: prelude::Rect, buf: &mut prelude::Buffer)
-    where
-        Self: Sized,
-    {
-        // Line at top
-        Line::from("Hello World").render(area, buf);
-    }
 }

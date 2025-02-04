@@ -58,9 +58,24 @@
 
       devShells = forEachSupportedSystem (
         { pkgs }:
-        {
-          default = pkgs.mkShell {
-            packages = with pkgs; [
+        let
+          icedPackages = with pkgs; [
+            expat
+            fontconfig
+            freetype
+            freetype.dev
+            libGL
+            pkg-config
+            xorg.libX11
+            xorg.libXcursor
+            xorg.libXi
+            xorg.libXrandr
+            wayland
+            libxkbcommon
+          ];
+          packagesList =
+            with pkgs;
+            [
               rustToolchain
               openssl
               pkg-config
@@ -68,12 +83,18 @@
               cargo-edit
               cargo-watch
               rust-analyzer
-              alsa-lib # Required to compile but not to run
-            ];
+              alsa-lib # Required for audio
+            ]
+            ++ icedPackages;
+        in
+        {
+          default = pkgs.mkShell {
+            packages = packagesList;
 
             env = {
               # Required by rust-analyzer
               RUST_SRC_PATH = "${pkgs.rustToolchain}/lib/rustlib/src/rust/library";
+              LD_LIBRARY_PATH = builtins.foldl' (a: b: "${a}:${b}/lib") "${pkgs.vulkan-loader}/lib" packagesList;
             };
           };
         }

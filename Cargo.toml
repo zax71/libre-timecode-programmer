@@ -4,8 +4,10 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-anyhow = "1.0.95"
-clap = { version = "4.5.27", features = ["derive"] }
-crossterm = "0.28.1"
-ratatui = "0.29.0"
-rodio = "0.20.1"
+anyhow = "1.0.95" # Error handeling 
+clap = { version = "4.5.27", features = [
+  "derive",
+] } # CLI arg parsing - will prob be removed
+rodio = "0.20.1" # Audio playback
+iced = "0.13.1" # UI Lib
+percentage = "0.1.0"
