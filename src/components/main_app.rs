@@ -23,8 +23,7 @@ impl MainApp {
     }
 
     pub fn view(&self) -> Element<Message> {
-        let current_seek_bar = seek_bar::SeekBar::view(&self.seek_bar);
-        current_seek_bar.map(Message::SeekBar)
+        Element::from(seek_bar::SeekBar::view(&self.seek_bar)).map(Message::SeekBar)
     }
 
     pub fn theme(&self) -> Theme {
