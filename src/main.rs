@@ -1,48 +1,21 @@
 use anyhow::{Context, Result};
-use iced::widget::{slider, Column};
-use iced::Theme;
+
+use components::main_app::MainApp;
+use components::seek_bar::SeekBar;
 use rodio::{source::Source, Decoder, OutputStream};
 use std::fs::File;
 use std::io::BufReader;
 use std::path::PathBuf;
+mod components;
 
 fn main() -> iced::Result {
     // Get CLI arguments
     //let args = Args::parse();
     //play_audio(args.file).expect("Failed to play audio");
 
-    iced::application("Libre Timecode Programmer", SeekBar::update, SeekBar::view)
-        .theme(SeekBar::theme)
+    iced::application("Libre Timecode Programmer", MainApp::update, MainApp::view)
+        .theme(MainApp::theme)
         .run()
-}
-#[derive(Default)]
-pub struct SeekBar {
-    time: f32,
-}
-
-#[derive(Debug, Clone, Copy)]
-pub enum Message {
-    SliderChanged(f32),
-}
-
-impl SeekBar {
-    fn update(&mut self, message: Message) {
-        match message {
-            Message::SliderChanged(x) => self.time = x,
-        }
-    }
-
-    fn view(&self) -> Column<Message> {
-        let slider = slider(0.0..=100.0, self.time, Message::SliderChanged);
-
-        let container = Column::new().push(slider);
-
-        container
-    }
-
-    fn theme(&self) -> Theme {
-        Theme::SolarizedDark
-    }
 }
 
 fn play_audio(location: PathBuf) -> Result<()> {
