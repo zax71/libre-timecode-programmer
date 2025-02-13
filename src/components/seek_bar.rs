@@ -1,7 +1,6 @@
 use iced::widget::{slider, Column};
-use iced::Theme;
 
-#[derive(Default)]
+#[derive(Default, Clone, Debug, Copy)]
 pub struct SeekBar {
     time: f32,
 }
