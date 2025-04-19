@@ -1,11 +1,7 @@
-# Libre Timecode Programmer
+# Tauri + SvelteKit + TypeScript
 
-A command line based application designed to make the process of programming timecoded shows easier
+This template should help get you started developing with Tauri, SvelteKit and TypeScript in Vite.
 
-## Features
+## Recommended IDE Setup
 
-- [ ] Play audio
-- [ ] Output MIDI timecode
-- [ ] Terminal UI
-- [ ] Create cues with description and time
-- [ ] Save to file
+[VS Code](https://code.visualstudio.com/) + [Svelte](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer).
